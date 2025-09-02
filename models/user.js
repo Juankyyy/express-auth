@@ -1,5 +1,6 @@
 import { UserController } from "../controllers/user.js";
 import { validateUser } from "../validations/user.js";
+import jwt from "jsonwebtoken";
 
 export class UserModel {
   static async getAll(req, res) {
@@ -51,8 +52,18 @@ export class UserModel {
           .json({ message: JSON.parse(validation.error.message) });
       }
       const user = await UserController.login({ username, password });
+      const token = jwt.sign(user, process.env.JWT_SECRET, {
+        expiresIn: "1d",
+      });
 
-      res.status(200).json({ message: "Usuario logueado", user: user });
+      res
+        .status(200)
+        .cookie("jwt", token, {
+          httpOnly: true,
+          // secure: true,
+          sameSite: "strict",
+        })
+        .json({ message: "Usuario logueado", user: user, token: token });
     } catch (err) {
       res.status(401).send(err.message);
     }

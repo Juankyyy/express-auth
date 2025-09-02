@@ -36,6 +36,7 @@ export class UserController {
     if (!isValidPassword) throw new Error("Invalid password");
 
     return {
+      _id: user._id,
       username: user.username,
     };
   }

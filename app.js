@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import cookieParser from "cookie-parser";
 import { corsMiddleware } from "./middlewares/cors.js";
 import { connectDB } from "./db.js";
 import { UsersRouter } from "./routes/users.js";
@@ -8,6 +9,7 @@ const app = express();
 app.disable("x-powered-by");
 app.use(express.json());
 app.use(corsMiddleware());
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Hola, Auth!");
