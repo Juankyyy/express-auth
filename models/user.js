@@ -22,7 +22,9 @@ export class UserModel {
       const validation = validateUser({ username, password });
 
       if (!validation.success) {
-        return res.status(400).json({ message: JSON.parse(validation.error.message) });
+        return res
+          .status(400)
+          .json({ message: JSON.parse(validation.error.message) });
       }
 
       const user = await UserController.create({ username, password });
@@ -37,26 +39,22 @@ export class UserModel {
     }
   }
 
-  static async login (req, res) {
-    try {
-      const { username, password } = req.body;
+  static async login(req, res) {
+    const { username, password } = req.body;
 
+    try {
       const validation = validateUser({ username, password });
 
       if (!validation.success) {
-        return res.status(400).json({ message: JSON.parse(validation.error.message) });
+        return res
+          .status(400)
+          .json({ message: JSON.parse(validation.error.message) });
       }
-
       const user = await UserController.login({ username, password });
 
-      if (!user) {
-        return res.status(401).json({ message: "Invalid username or password" });
-      }
-
       res.status(200).json({ message: "Usuario logueado", user: user });
-
     } catch (err) {
-      console.error("Error al loguear usuario:", err);
+      res.status(401).send(err.message);
     }
   }
 }
