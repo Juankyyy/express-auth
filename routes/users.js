@@ -8,3 +8,5 @@ UsersRouter.get("/", UserModel.getAll);
 UsersRouter.post("/", UserModel.create);
 
 UsersRouter.post("/login", UserModel.login);
+
+UsersRouter.post("/logout", UserModel.logout);

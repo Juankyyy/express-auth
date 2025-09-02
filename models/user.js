@@ -68,4 +68,11 @@ export class UserModel {
       res.status(401).send(err.message);
     }
   }
+
+  static async logout(req, res) {
+    res
+      .status(200)
+      .clearCookie("jwt")
+      .json({ message: "Usuario cerró sesión" });
+  }
 }
