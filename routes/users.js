@@ -10,3 +10,5 @@ UsersRouter.post("/", UserModel.create);
 UsersRouter.post("/login", UserModel.login);
 
 UsersRouter.post("/logout", UserModel.logout);
+
+UsersRouter.get("/:id", UserModel.getById);

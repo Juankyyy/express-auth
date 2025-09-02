@@ -16,6 +16,17 @@ export class UserModel {
     }
   }
 
+  static async getById(req, res) {
+    const { id } = req.params;
+    try {
+      const user = await UserController.getById({ id });
+
+      return res.status(200).json(user);
+    } catch (err) {
+      console.error("Error al buscar usuario:", err);
+    }
+  }
+
   static async create(req, res) {
     try {
       const { username, password } = req.body;
@@ -30,13 +41,9 @@ export class UserModel {
 
       const user = await UserController.create({ username, password });
 
-      if (!user) {
-        return res.status(409).json({ message: "User already exists" });
-      }
-
       res.status(201).json({ message: "Usuario creado", user: user });
     } catch (err) {
-      console.error("Error al crear usuario:", err);
+      res.status(400).json({ message: err.message });
     }
   }
 
@@ -65,7 +72,7 @@ export class UserModel {
         })
         .json({ message: "Usuario logueado", user: user, token: token });
     } catch (err) {
-      res.status(401).send(err.message);
+      res.status(401).json({ message: err.message });
     }
   }
 

@@ -8,11 +8,19 @@ export class UserController {
     return users;
   }
 
+  static async getById({ id }) {
+    const user = await User.findById(id);
+
+    if (!user) throw new Error("User not found");
+
+    return user;
+  }
+
   static async create({ username, password }) {
     const user = await User.findOne({ username });
 
     if (user) {
-      return false;
+      throw new Error("User already exists");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
