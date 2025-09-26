@@ -1,13 +1,14 @@
 import "dotenv/config";
 import express from "express";
+import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import { corsMiddleware } from "./middlewares/cors.js";
 import { connectDB } from "./db.js";
 import { UsersRouter } from "./routes/users.js";
 
 const app = express();
-app.disable("x-powered-by");
 app.use(express.json());
+app.use(helmet());
 app.use(corsMiddleware());
 app.use(cookieParser());
 
