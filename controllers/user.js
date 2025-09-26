@@ -30,7 +30,7 @@ export class UserController {
       password: hashedPassword,
     });
 
-    await user.save();
+    await newUser.save();
 
     return newUser;
   }
