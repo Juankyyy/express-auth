@@ -18,6 +18,6 @@ export const validateUser = (input) => {
 };
 
 // patch
-// export const validatePartialUser = (input) => {
-//   return userValidation.partial().safeParse(input);
-// };
+export const validatePartialUser = (input) => {
+  return userValidation.partial().safeParse(input);
+};

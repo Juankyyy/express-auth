@@ -1,7 +1,7 @@
-import "dotenv/config";
 import express from "express";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import "dotenv/config";
 import { corsMiddleware } from "./middlewares/cors.js";
 import { connectDB } from "./db.js";
 import { UsersRouter } from "./routes/users.js";
@@ -20,7 +20,7 @@ app.use("/users", UsersRouter);
 
 connectDB();
 
-const PORT = process.env.PORT ?? 3000;
+const PORT = process.env.PORT ?? 1234;
 
 app.listen(PORT, () => {
   console.log("Server is running on port " + PORT);

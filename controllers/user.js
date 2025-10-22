@@ -48,4 +48,16 @@ export class UserController {
       username: user.username,
     };
   }
+
+  static async update({ id, input }) {
+    const user = await User.findById(id);
+    if (!user) throw new Error("User not found");
+
+    const updatedUser = await User.updateOne(
+      { _id: user._id },
+      { $set: input }
+    );
+
+    return updatedUser;
+  }
 }

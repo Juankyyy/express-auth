@@ -1,5 +1,5 @@
 import { UserController } from "../controllers/user.js";
-import { validateUser } from "../validations/user.js";
+import { validatePartialUser, validateUser } from "../validations/user.js";
 import jwt from "jsonwebtoken";
 
 export class UserModel {
@@ -81,5 +81,26 @@ export class UserModel {
       .status(200)
       .clearCookie("jwt")
       .json({ message: "Usuario cerró sesión" });
+  }
+
+  static async update(req, res) {
+    const { id } = req.params;
+    const { username, password } = req.body;
+
+    try {
+      const resultInput = validatePartialUser({ username, password });
+      
+      if (!resultInput.success) {
+        return res
+          .status(400)
+          .json({ message: JSON.parse(resultInput.error.message) });
+      }
+
+      const user = await UserController.update({ id, input: resultInput.data });
+      
+      res.status(200).json({ message: "Usuario actualizado", user: user });
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
   }
 }
