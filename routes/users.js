@@ -14,3 +14,5 @@ UsersRouter.post("/logout", UserModel.logout);
 UsersRouter.get("/:id", UserModel.getById);
 
 UsersRouter.patch("/:id", UserModel.update);
+
+UsersRouter.patch("/find/:id", UserModel.updateAndFind);

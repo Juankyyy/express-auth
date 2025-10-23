@@ -103,4 +103,28 @@ export class UserModel {
       res.status(400).json({ message: err.message });
     }
   }
+
+  static async updateAndFind(req, res) {
+    const { id } = req.params;
+    const { username, password } = req.body;
+
+    try {
+      const resultInput = validatePartialUser({ username, password });
+
+      if (!resultInput.success) {
+        return res
+          .status(400)
+          .json({ message: JSON.parse(resultInput.error.message) });
+      }
+
+      const user = await UserController.updateAndFind({
+        id,
+        input: resultInput.data,
+      });
+
+      res.status(200).json({ message: "Usuario actualizado", user: user });
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
+  }
 }
