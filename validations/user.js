@@ -17,7 +17,7 @@ export const validateUser = (input) => {
   return userValidation.safeParse(input);
 };
 
-// patch
+// PATCH
 export const validatePartialUser = (input) => {
   return userValidation.partial().safeParse(input);
 };
