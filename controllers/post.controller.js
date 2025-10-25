@@ -6,4 +6,12 @@ export class PostController {
 
     return posts;
   }
+
+  static async getById({ id }) {
+    const post = await Post.findById(id);
+
+    if (!post) throw new Error("Post not found");
+
+    return post;
+  }
 }
