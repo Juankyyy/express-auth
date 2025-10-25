@@ -14,4 +14,25 @@ export class PostController {
 
     return post;
   }
+
+  static async create({
+    userId,
+    description,
+    images,
+    likes,
+    comments,
+    visibility,
+  }) {
+    const newPost = new Post({
+      userId,
+      description,
+      images,
+      likes,
+      comments,
+      visibility,
+    });
+
+    await newPost.save();
+    return newPost;
+  }
 }
