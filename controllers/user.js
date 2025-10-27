@@ -66,7 +66,7 @@ export class UserController {
       id,
       { $set: input }, // Para que sea PATCH
       { new: true }
-      // {overwrite: true} Para que sea PUT
+      // {overwrite: true} // Para que sea PUT
     );
     if (!user) throw new Error("User not found");
 

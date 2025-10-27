@@ -28,8 +28,8 @@ export class PostModel {
 
   static async create(req, res) {
     try {
-      const { userId, description, images, likes, comments, visibility } =
-        req.body;
+      const userId = req.user._id;
+      const { description, images, likes, comments, visibility } = req.body;
 
       const validation = validatePost({
         userId,
