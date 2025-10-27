@@ -48,17 +48,17 @@ export class UserModel {
   }
 
   static async login(req, res) {
-    const { username, password } = req.body;
+    const input = req.body;
 
     try {
-      const validation = validateUser({ username, password });
+      const validation = validateUser(input);
 
       if (!validation.success) {
         return res
           .status(400)
           .json({ message: JSON.parse(validation.error.message) });
       }
-      const user = await UserController.login({ username, password });
+      const user = await UserController.login(validation.data);
       const token = jwt.sign(user, process.env.JWT_SECRET, {
         expiresIn: "1d",
       });
@@ -88,15 +88,15 @@ export class UserModel {
     const { username, password } = req.body;
 
     try {
-      const resultInput = validatePartialUser({ username, password });
+      const validation = validatePartialUser({ username, password });
       
-      if (!resultInput.success) {
+      if (!validation.success) {
         return res
           .status(400)
-          .json({ message: JSON.parse(resultInput.error.message) });
+          .json({ message: JSON.parse(validation.error.message) });
       }
 
-      const user = await UserController.update({ id, input: resultInput.data });
+      const user = await UserController.update({ id, input: validation.data });
       
       res.status(200).json({ message: "Usuario actualizado", user: user });
     } catch (err) {
@@ -109,17 +109,17 @@ export class UserModel {
     const { username, password } = req.body;
 
     try {
-      const resultInput = validatePartialUser({ username, password });
+      const validation = validatePartialUser({ username, password });
 
-      if (!resultInput.success) {
+      if (!validation.success) {
         return res
           .status(400)
-          .json({ message: JSON.parse(resultInput.error.message) });
+          .json({ message: JSON.parse(validation.error.message) });
       }
 
       const user = await UserController.updateAndFind({
         id,
-        input: resultInput.data,
+        input: validation.data,
       });
 
       res.status(200).json({ message: "Usuario actualizado", user: user });
