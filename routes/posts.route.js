@@ -9,3 +9,5 @@ PostsRouter.get("/", PostModel.getAll);
 PostsRouter.get("/:id", PostModel.getById);
 
 PostsRouter.post("/", verifyToken, PostModel.create);
+
+PostsRouter.patch("/:id", verifyToken, PostModel.update);

@@ -23,12 +23,13 @@ export class PostController {
   }
 
   static async update({ id, input }) {
-    const post = await Post.findByIdAndUpdate(id, input, {
-      new: true,
-      overwrite: true,
-    });
-    if (!post) throw new Error("Post not found");
+    const updatedPost = await Post.findByIdAndUpdate(
+      id,
+      { $set: input },
+      { new: true }
+    );
+    if (!updatedPost) throw new Error("Post not found");
 
-    return post;
+    return updatedPost;
   }
 }
