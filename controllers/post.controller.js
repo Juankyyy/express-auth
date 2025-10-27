@@ -32,4 +32,22 @@ export class PostController {
 
     return updatedPost;
   }
+
+  static async toggleLike({ id, userId }) {
+    const post = await Post.findById(id);
+
+    if (!post) throw new Error("Post not found");
+
+    const hasLiked = post.likes.includes(userId);
+
+    const postToggledLike = await Post.findByIdAndUpdate(
+      id,
+      hasLiked
+      ? { $pull: { likes: userId } }      // quitar like
+      : { $addToSet: { likes: userId } }, // dar like
+      { new: true }
+    );
+
+    return { post: postToggledLike, action: hasLiked ? "Le quitaste el like" : "Le diste like" };
+  }
 }

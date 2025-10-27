@@ -11,3 +11,5 @@ PostsRouter.get("/:id", PostModel.getById);
 PostsRouter.post("/", verifyToken, PostModel.create);
 
 PostsRouter.patch("/:id", verifyToken, PostModel.update);
+
+PostsRouter.patch("/:id/like", verifyToken, PostModel.toggleLike);

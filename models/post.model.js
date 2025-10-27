@@ -74,4 +74,17 @@ export class PostModel {
       console.error("Error al actualizar post:", err);
     }
   }
+
+  static async toggleLike(req,res) {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    try {
+      const { post, action } = await PostController.toggleLike({ id, userId });
+
+      res.status(200).json({ message: action, post });
+    } catch (err) {
+      console.error("Error al cambiar like:", err);
+    }
+  }
 }
