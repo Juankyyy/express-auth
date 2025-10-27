@@ -2,6 +2,7 @@ import express from "express";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
+
 import { corsMiddleware } from "./middlewares/cors.js";
 import { connectDB } from "./db.js";
 
