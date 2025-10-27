@@ -5,6 +5,7 @@ const objectId = z
   .regex(/^[0-9a-fA-F]{24}$/, "Invalid ObjectId format");
 
 export const postValidation = z.object({
+  userId: objectId,
   description: z.string().min(1).max(200),
   images: z.array(z.string().optional().default([])).default([]),
   likes: z.array(objectId).optional().default([]),
@@ -14,4 +15,17 @@ export const postValidation = z.object({
 
 export const validatePost = (input) => {
   return postValidation.safeParse(input);
+};
+
+export const validateCreatePost = (input) => {
+  const postCreationValidation = postValidation.omit({
+    likes: true,
+    comments: true,
+  });
+
+  return postCreationValidation.safeParse(input);
+};
+
+export const validatePartialPost = (input) => {
+  return postValidation.partial().safeParse(input);
 };

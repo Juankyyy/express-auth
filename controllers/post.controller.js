@@ -15,24 +15,20 @@ export class PostController {
     return post;
   }
 
-  static async create({
-    userId,
-    description,
-    images,
-    likes,
-    comments,
-    visibility,
-  }) {
-    const newPost = new Post({
-      userId,
-      description,
-      images,
-      likes,
-      comments,
-      visibility,
-    });
+  static async create(input) {
+    const newPost = new Post(input);
 
     await newPost.save();
     return newPost;
+  }
+
+  static async update({ id, input }) {
+    const post = await Post.findByIdAndUpdate(id, input, {
+      new: true,
+      overwrite: true,
+    });
+    if (!post) throw new Error("Post not found");
+
+    return post;
   }
 }

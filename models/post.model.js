@@ -1,5 +1,5 @@
 import { PostController } from "../controllers/post.controller.js";
-import { validatePost } from "../validations/post.js";
+import { validateCreatePost } from "../validations/post.js";
 
 export class PostModel {
   static async getAll(req, res) {
@@ -29,16 +29,9 @@ export class PostModel {
   static async create(req, res) {
     try {
       const userId = req.user._id;
-      const { description, images, likes, comments, visibility } = req.body;
+      const input = { ...req.body, userId };
 
-      const validation = validatePost({
-        userId,
-        description,
-        images,
-        likes,
-        comments,
-        visibility,
-      });
+      const validation = validateCreatePost(input);
 
       if (!validation.success) {
         return res
@@ -46,18 +39,20 @@ export class PostModel {
           .json({ message: JSON.parse(validation.error.message) });
       }
 
-      const post = await PostController.create({
-        userId,
-        description,
-        images,
-        likes,
-        comments,
-        visibility,
-      });
+      const post = await PostController.create(validation.data);
 
       res.status(201).json({ message: "Post creado", post: post });
     } catch (err) {
       console.error("Error al crear post:", err);
     }
   }
+
+  // static async update(req, res) {
+  //   try {
+  //     const { id } = req.params;
+  //     const
+  //   } catch (err) {
+  //   console.error("Error al actualizar post:", err);
+  //   }
+  // }
 }
