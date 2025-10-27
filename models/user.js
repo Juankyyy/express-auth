@@ -18,6 +18,7 @@ export class UserModel {
 
   static async getById(req, res) {
     const { id } = req.params;
+    
     try {
       const user = await UserController.getById({ id });
 
@@ -28,9 +29,9 @@ export class UserModel {
   }
 
   static async create(req, res) {
+    const { username, password } = req.body;
+    
     try {
-      const { username, password } = req.body;
-
       const validation = validateUser({ username, password });
 
       if (!validation.success) {

@@ -62,14 +62,14 @@ export class UserController {
   }
 
   static async updateAndFind({ id, input }) {
-    const user = await User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       id,
       { $set: input }, // Para que sea PATCH
       { new: true }
       // {overwrite: true} // Para que sea PUT
     );
-    if (!user) throw new Error("User not found");
+    if (!updatedUser) throw new Error("User not found");
 
-    return user;
+    return updatedUser;
   }
 }
