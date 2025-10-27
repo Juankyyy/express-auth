@@ -23,6 +23,13 @@ const postSchema = new mongoose.Schema(
         default: [],
       },
     ],
+    repost: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,

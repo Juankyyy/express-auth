@@ -13,3 +13,5 @@ PostsRouter.post("/", verifyToken, PostModel.create);
 PostsRouter.patch("/:id", verifyToken, PostModel.update);
 
 PostsRouter.patch("/:id/like", verifyToken, PostModel.toggleLike);
+
+PostsRouter.patch("/:id/repost", verifyToken, PostModel.toggleRepost);

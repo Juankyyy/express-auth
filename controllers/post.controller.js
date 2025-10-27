@@ -43,11 +43,35 @@ export class PostController {
     const postToggledLike = await Post.findByIdAndUpdate(
       id,
       hasLiked
-      ? { $pull: { likes: userId } }      // quitar like
-      : { $addToSet: { likes: userId } }, // dar like
+        ? { $pull: { likes: userId } } // quitar like
+        : { $addToSet: { likes: userId } }, // dar like
       { new: true }
     );
 
-    return { post: postToggledLike, action: hasLiked ? "Le quitaste el like" : "Le diste like" };
+    return {
+      post: postToggledLike,
+      action: hasLiked ? "Le quitaste el like" : "Le diste like",
+    };
+  }
+
+  static async toggleRepost({ id, userId }) {
+    const post = await Post.findById(id);
+
+    if (!post) throw new Error("Post not found");
+
+    const hasReposted = post.repost.includes(userId);
+
+    const postToggledRepost = await Post.findByIdAndUpdate(
+      id,
+      hasReposted
+        ? { $pull: { repost: userId } }
+        : { $addToSet: { repost: userId } },
+      { new: true }
+    );
+
+    return {
+      post: postToggledRepost,
+      action: hasReposted ? "Repost quitado" : "Reposteado",
+    };
   }
 }

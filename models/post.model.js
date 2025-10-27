@@ -14,7 +14,7 @@ export class PostModel {
 
       return res.status(200).json(posts);
     } catch (err) {
-      console.error("Error al buscar posts:", err);
+      res.status(400).json({ message: "Error al buscar post por id", error: err.message  });
     }
   }
 
@@ -26,7 +26,7 @@ export class PostModel {
 
       return res.status(200).json(post);
     } catch (err) {
-      console.error("Error al buscar post:", err);
+      res.status(400).json({ message: "Error al buscar post por id", error: err.message  });
     }
   }
 
@@ -47,14 +47,14 @@ export class PostModel {
 
       res.status(201).json({ message: "Post creado", post: post });
     } catch (err) {
-      console.error("Error al crear post:", err);
+      res.status(400).json({ message: "Error al crear post", error: err.message  });
     }
   }
 
   static async update(req, res) {
     const { id } = req.params;
     const input = req.body;
-    
+
     try {
       const validation = validatePartialPost(input);
 
@@ -71,11 +71,11 @@ export class PostModel {
 
       res.status(200).json({ message: "Post actualizado", post: updatedPost });
     } catch (err) {
-      console.error("Error al actualizar post:", err);
+      res.status(400).json({ message: "Error al actualizar post", error: err.message  });
     }
   }
 
-  static async toggleLike(req,res) {
+  static async toggleLike(req, res) {
     const { id } = req.params;
     const userId = req.user._id;
 
@@ -84,7 +84,23 @@ export class PostModel {
 
       res.status(200).json({ message: action, post });
     } catch (err) {
-      console.error("Error al cambiar like:", err);
+      res.status(400).json({ message: "Error al cambiar like", error: err.message  });
+    }
+  }
+
+  static async toggleRepost(req, res) {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    try {
+      const { post, action } = await PostController.toggleRepost({
+        id,
+        userId,
+      });
+
+      res.status(200).json({ message: action, post });
+    } catch (err) {
+      res.status(400).json({ message: "Error al cambiar repost", error: err.message  });
     }
   }
 }

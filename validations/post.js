@@ -9,6 +9,7 @@ export const postValidation = z.object({
   description: z.string().min(1).max(200),
   images: z.array(z.string().optional().default([])).default([]),
   likes: z.array(objectId).optional().default([]),
+  repost: z.array(objectId).optional().default([]),
   comments: z.array(objectId).optional().default([]).default([]),
   visibility: z.enum(["public", "private"]).default("public"),
 });
@@ -20,6 +21,7 @@ export const validatePost = (input) => {
 export const validateCreatePost = (input) => {
   const postCreationValidation = postValidation.omit({
     likes: true,
+    repost: true,
     comments: true,
   });
 
