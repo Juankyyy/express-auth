@@ -9,7 +9,9 @@ export const postValidation = z.object({
   description: z.string().min(1).max(200),
   images: z.array(z.string().optional().default([])).default([]),
   likes: z.array(objectId).optional().default([]),
+  likesCount: z.number().min(0).optional().default(0),
   repost: z.array(objectId).optional().default([]),
+  repostCount: z.number().min(0).optional().default(0),
   comments: z.array(objectId).optional().default([]).default([]),
   visibility: z.enum(["public", "private"]).default("public"),
 });

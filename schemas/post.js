@@ -23,6 +23,7 @@ const postSchema = new mongoose.Schema(
         default: [],
       },
     ],
+    likesCount: { type: Number, default: 0 },
     repost: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -30,6 +31,7 @@ const postSchema = new mongoose.Schema(
         default: [],
       },
     ],
+    repostCount: { type: Number, default: 0 },
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,
