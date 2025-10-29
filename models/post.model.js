@@ -9,12 +9,11 @@ export class PostModel {
     try {
       const posts = await PostController.getAll();
 
-      if (posts.length === 0)
-        return res.status(404).json({ message: "No posts found" });
-
       return res.status(200).json(posts);
     } catch (err) {
-      res.status(400).json({ message: "Error al buscar post por id", error: err.message  });
+      res
+        .status(400)
+        .json({ message: "Error al buscar post por id", error: err.message });
     }
   }
 
@@ -26,7 +25,9 @@ export class PostModel {
 
       return res.status(200).json(post);
     } catch (err) {
-      res.status(400).json({ message: "Error al buscar post por id", error: err.message  });
+      res
+        .status(400)
+        .json({ message: "Error al buscar post por id", error: err.message });
     }
   }
 
@@ -47,7 +48,9 @@ export class PostModel {
 
       res.status(201).json({ message: "Post creado", post: post });
     } catch (err) {
-      res.status(400).json({ message: "Error al crear post", error: err.message  });
+      res
+        .status(400)
+        .json({ message: "Error al crear post", error: err.message });
     }
   }
 
@@ -71,7 +74,9 @@ export class PostModel {
 
       res.status(200).json({ message: "Post actualizado", post: updatedPost });
     } catch (err) {
-      res.status(400).json({ message: "Error al actualizar post", error: err.message  });
+      res
+        .status(400)
+        .json({ message: "Error al actualizar post", error: err.message });
     }
   }
 
@@ -84,7 +89,9 @@ export class PostModel {
 
       res.status(200).json({ message: action, post });
     } catch (err) {
-      res.status(400).json({ message: "Error al cambiar like", error: err.message  });
+      res
+        .status(400)
+        .json({ message: "Error al cambiar like", error: err.message });
     }
   }
 
@@ -100,7 +107,9 @@ export class PostModel {
 
       res.status(200).json({ message: action, post });
     } catch (err) {
-      res.status(400).json({ message: "Error al cambiar repost", error: err.message  });
+      res
+        .status(400)
+        .json({ message: "Error al cambiar repost", error: err.message });
     }
   }
 }

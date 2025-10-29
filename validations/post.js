@@ -23,7 +23,9 @@ export const validatePost = (input) => {
 export const validateCreatePost = (input) => {
   const postCreationValidation = postValidation.omit({
     likes: true,
+    likesCount: true,
     repost: true,
+    repostCount: true,
     comments: true,
   });
 

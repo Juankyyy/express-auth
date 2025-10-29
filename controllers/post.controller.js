@@ -43,8 +43,14 @@ export class PostController {
     const postToggledLike = await Post.findByIdAndUpdate(
       id,
       hasLiked
-        ? { $pull: { likes: userId } } // quitar like
-        : { $addToSet: { likes: userId } }, // dar like
+        ? {
+            $pull: { likes: userId }, // quitar like
+            $inc: { likesCount: -1 },
+          }
+        : {
+            $addToSet: { likes: userId }, // dar like
+            $inc: { likesCount: 1 },
+          },
       { new: true }
     );
 
@@ -64,8 +70,8 @@ export class PostController {
     const postToggledRepost = await Post.findByIdAndUpdate(
       id,
       hasReposted
-        ? { $pull: { repost: userId } }
-        : { $addToSet: { repost: userId } },
+        ? { $pull: { repost: userId }, $inc: { repostCount: -1 } }
+        : { $addToSet: { repost: userId }, $inc: { repostCount: 1 } },
       { new: true }
     );
 
