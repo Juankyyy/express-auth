@@ -1,4 +1,5 @@
 import { CommentController } from "../controllers/CommentController.js";
+import { validateCreateComment } from "../validations/commentValidation.js";
 
 export class CommentModel {
   static async getAll(req, res) {
@@ -23,6 +24,29 @@ export class CommentModel {
     } catch (err) {
       res.status(400).json({
         message: "Error al buscar comment por id",
+        error: err.message,
+      });
+    }
+  }
+
+  static async create(req, res) {
+    const userId = req.user._id;
+    const input = { ...req.body, userId };
+
+    try {
+      const validation = validateCreateComment(input);
+
+      if (!validation.success) {
+        return res
+          .status(400)
+          .json({ message: JSON.parse(validation.error.message) });
+      }
+
+      const comment = await CommentController.create(validation.data);
+      return res.status(201).json({ message: "Comment created", comment });
+    } catch (err) {
+      res.status(400).json({
+        message: "Error al crear comentario",
         error: err.message,
       });
     }
