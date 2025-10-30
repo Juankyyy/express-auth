@@ -7,7 +7,8 @@ import { corsMiddleware } from "./middlewares/cors.js";
 import { connectDB } from "./db.js";
 
 import { UsersRouter } from "./routes/users.js";
-import { PostsRouter } from "./routes/posts.route.js";
+import { PostsRouter } from "./routes/posts.routes.js";
+import { CommentsRouter } from "./routes/comments.js";
 
 const app = express();
 app.use(express.json());
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 
 app.use("/users", UsersRouter);
 app.use("/posts", PostsRouter);
+app.use("/comments", CommentsRouter);
 
 connectDB();
 
