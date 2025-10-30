@@ -1,6 +1,6 @@
 # Express Auth
 
-API REST de autenticación con Express.js, MongoDB y JWT. Sistema completo de gestión de usuarios con registro, inicio de sesión, cierre de sesión y actualización de datos.
+API REST completa con Express.js, MongoDB y JWT. Sistema integral que incluye gestión de usuarios con autenticación, sistema de publicaciones (posts) con likes y reposts, y sistema de comentarios. Ideal para proyectos tipo red social o plataforma de contenido.
 
 ## 🚀 Características
 
@@ -8,6 +8,18 @@ API REST de autenticación con Express.js, MongoDB y JWT. Sistema completo de ge
 - ✅ Inicio de sesión con autenticación JWT
 - ✅ Cierre de sesión
 - ✅ Gestión de usuarios (CRUD)
+- ✅ Sistema de publicaciones (Posts)
+  - Crear, leer y actualizar posts
+  - Sistema de likes con contador
+  - Sistema de reposts con contador
+  - Soporte para múltiples imágenes
+  - Posts públicos y privados
+  - Populate de comentarios y usuario
+- ✅ Sistema de comentarios
+  - Crear comentarios en posts
+  - Sistema de likes en comentarios
+  - Soporte para imágenes en comentarios
+- ✅ Middleware de autenticación JWT
 - ✅ Encriptación de contraseñas con bcrypt
 - ✅ Validación de datos con Zod
 - ✅ Middleware de seguridad con Helmet
@@ -65,21 +77,32 @@ El servidor se ejecutará en `http://localhost:1234` (o el puerto especificado e
 
 ```
 express-auth/
-├── app.js                  # Punto de entrada de la aplicación
-├── db.js                   # Configuración de la conexión a MongoDB
-├── package.json            # Dependencias y scripts
-├── controllers/            # Lógica de negocio
-│   └── user.js            # Controlador de usuarios
-├── models/                 # Modelos de datos
-│   └── user.js            # Modelo de usuario
-├── routes/                 # Definición de rutas
-│   └── users.js           # Rutas de usuarios
-├── schemas/                # Esquemas de Mongoose
-│   └── user.js            # Esquema de usuario
-├── validations/            # Validaciones con Zod
-│   └── user.js            # Validaciones de usuario
-└── middlewares/            # Middlewares personalizados
-    └── cors.js            # Configuración de CORS
+├── app.js                       # Punto de entrada de la aplicación
+├── db.js                        # Configuración de la conexión a MongoDB
+├── package.json                 # Dependencias y scripts
+├── controllers/                 # Lógica de negocio
+│   ├── user.js                 # Controlador de usuarios
+│   ├── post.controller.js      # Controlador de posts
+│   └── commentController.js    # Controlador de comentarios
+├── models/                      # Modelos de datos
+│   ├── user.js                 # Modelo de usuario
+│   ├── post.model.js           # Modelo de posts
+│   └── Comment.js              # Modelo de comentarios
+├── routes/                      # Definición de rutas
+│   ├── users.js                # Rutas de usuarios
+│   ├── posts.routes.js         # Rutas de posts
+│   └── comments.js             # Rutas de comentarios
+├── schemas/                     # Esquemas de Mongoose
+│   ├── user.js                 # Esquema de usuario
+│   ├── post.js                 # Esquema de post
+│   └── commentSchema.js        # Esquema de comentario
+├── validations/                 # Validaciones con Zod
+│   ├── user.js                 # Validaciones de usuario
+│   ├── post.js                 # Validaciones de posts
+│   └── commentValidation.js    # Validaciones de comentarios
+└── middlewares/                 # Middlewares personalizados
+    ├── cors.js                 # Configuración de CORS
+    └── auth.middleware.js      # Middleware de autenticación JWT
 ```
 
 ## 🔌 API Endpoints
@@ -89,6 +112,18 @@ express-auth/
 GET /
 ```
 Respuesta: `"Hola, Auth!"`
+
+### Autenticación
+
+#### 🔐 Middleware de Autenticación
+
+La API utiliza JWT (JSON Web Tokens) para proteger rutas sensibles. Los endpoints que requieren autenticación están marcados con 🔒.
+
+**Headers requeridos:**
+- Cookie `jwt` (establecida automáticamente en login)
+
+**Respuestas de error de autenticación:**
+- `401 Unauthorized`: "No has iniciado sesión" | "Token inválido" | "Token expirado"
 
 ### Usuarios
 
@@ -218,6 +253,277 @@ PATCH /users/:id
 }
 ```
 
+---
+
+### Posts (Publicaciones)
+
+#### 1. Obtener todos los posts
+```http
+GET /posts
+```
+
+**Respuesta exitosa (200):**
+```json
+[
+  {
+    "_id": "507f1f77bcf86cd799439011",
+    "userId": "507f1f77bcf86cd799439012",
+    "description": "Mi primer post",
+    "images": ["https://ejemplo.com/imagen1.jpg"],
+    "likes": [],
+    "likesCount": 0,
+    "repost": [],
+    "repostCount": 0,
+    "comments": [],
+    "visibility": "public",
+    "createdAt": "2025-10-29T19:26:41.000Z",
+    "updatedAt": "2025-10-29T19:26:41.000Z"
+  }
+]
+```
+
+#### 2. Obtener post por ID (con populate) 🔒
+```http
+GET /posts/:id
+```
+
+**Parámetros:**
+- `id` - ID del post (MongoDB ObjectId)
+
+**Respuesta exitosa (200):**
+```json
+{
+  "_id": "507f1f77bcf86cd799439011",
+  "userId": {
+    "_id": "507f1f77bcf86cd799439012",
+    "username": "usuario1"
+  },
+  "description": "Mi primer post",
+  "images": ["https://ejemplo.com/imagen1.jpg"],
+  "likes": [],
+  "likesCount": 0,
+  "repost": [],
+  "repostCount": 0,
+  "comments": [
+    {
+      "_id": "507f1f77bcf86cd799439013",
+      "content": "¡Excelente post!",
+      "userId": "507f1f77bcf86cd799439014"
+    }
+  ],
+  "visibility": "public",
+  "createdAt": "2025-10-29T19:26:41.000Z",
+  "updatedAt": "2025-10-29T19:26:41.000Z"
+}
+```
+
+**Nota:** Este endpoint hace populate de `comments` y `userId` para traer toda la información relacionada.
+
+#### 3. Crear post 🔒
+```http
+POST /posts
+```
+**Requiere autenticación**
+
+**Body (JSON):**
+```json
+{
+  "description": "Contenido del post",
+  "images": ["https://ejemplo.com/imagen1.jpg", "https://ejemplo.com/imagen2.jpg"],
+  "visibility": "public"
+}
+```
+
+**Validaciones:**
+- Description: requerido, mínimo 1 carácter, máximo 200 caracteres
+- Images: array de strings (opcional)
+- Visibility: "public" o "private" (default: "public")
+
+**Respuesta exitosa (201):**
+```json
+{
+  "message": "Post creado",
+  "post": {
+    "_id": "507f1f77bcf86cd799439011",
+    "userId": "507f1f77bcf86cd799439012",
+    "description": "Contenido del post",
+    "images": ["https://ejemplo.com/imagen1.jpg"],
+    "likes": [],
+    "likesCount": 0,
+    "repost": [],
+    "repostCount": 0,
+    "comments": [],
+    "visibility": "public"
+  }
+}
+```
+
+#### 4. Actualizar post 🔒
+```http
+PATCH /posts/:id
+```
+**Requiere autenticación**
+
+**Parámetros:**
+- `id` - ID del post
+
+**Body (JSON) - Todos los campos son opcionales:**
+```json
+{
+  "description": "Nuevo contenido",
+  "images": ["https://ejemplo.com/nueva-imagen.jpg"],
+  "visibility": "private"
+}
+```
+
+**Respuesta exitosa (200):**
+```json
+{
+  "message": "Post actualizado",
+  "post": {
+    "_id": "507f1f77bcf86cd799439011",
+    "description": "Nuevo contenido",
+    "images": ["https://ejemplo.com/nueva-imagen.jpg"],
+    "visibility": "private"
+  }
+}
+```
+
+#### 5. Toggle Like en post 🔒
+```http
+PATCH /posts/:id/like
+```
+**Requiere autenticación**
+
+**Parámetros:**
+- `id` - ID del post
+
+**Respuesta exitosa (200):**
+```json
+{
+  "message": "Le diste like",
+  "post": {
+    "_id": "507f1f77bcf86cd799439011",
+    "likes": ["507f1f77bcf86cd799439012"],
+    "likesCount": 1
+  }
+}
+```
+
+**Nota:** Si ya le habías dado like, el mensaje será "Le quitaste el like" y se decrementará el contador.
+
+#### 6. Toggle Repost 🔒
+```http
+PATCH /posts/:id/repost
+```
+**Requiere autenticación**
+
+**Parámetros:**
+- `id` - ID del post
+
+**Respuesta exitosa (200):**
+```json
+{
+  "message": "Reposteado",
+  "post": {
+    "_id": "507f1f77bcf86cd799439011",
+    "repost": ["507f1f77bcf86cd799439012"],
+    "repostCount": 1
+  }
+}
+```
+
+**Nota:** Si ya habías reposteado, el mensaje será "Repost quitado" y se decrementará el contador.
+
+---
+
+### Comentarios
+
+#### 1. Obtener todos los comentarios
+```http
+GET /comments
+```
+
+**Respuesta exitosa (200):**
+```json
+[
+  {
+    "_id": "507f1f77bcf86cd799439013",
+    "postId": "507f1f77bcf86cd799439011",
+    "userId": "507f1f77bcf86cd799439012",
+    "content": "Excelente post!",
+    "images": [],
+    "likes": [],
+    "likesCount": 0,
+    "repost": [],
+    "repostCount": 0,
+    "createdAt": "2025-10-29T19:26:41.000Z",
+    "updatedAt": "2025-10-29T19:26:41.000Z"
+  }
+]
+```
+
+#### 2. Obtener comentario por ID
+```http
+GET /comments/:id
+```
+
+**Parámetros:**
+- `id` - ID del comentario (MongoDB ObjectId)
+
+**Respuesta exitosa (200):**
+```json
+{
+  "_id": "507f1f77bcf86cd799439013",
+  "postId": "507f1f77bcf86cd799439011",
+  "userId": "507f1f77bcf86cd799439012",
+  "content": "Excelente post!",
+  "images": [],
+  "likes": [],
+  "likesCount": 0,
+  "repost": [],
+  "repostCount": 0
+}
+```
+
+#### 3. Crear comentario 🔒
+```http
+POST /comments
+```
+**Requiere autenticación**
+
+**Body (JSON):**
+```json
+{
+  "postId": "507f1f77bcf86cd799439011",
+  "content": "¡Excelente post!",
+  "images": ["https://ejemplo.com/imagen.jpg"]
+}
+```
+
+**Validaciones:**
+- postId: requerido, debe ser un ObjectId válido
+- content: requerido, mínimo 1 carácter, máximo 200 caracteres
+- images: array de strings (opcional)
+
+**Respuesta exitosa (201):**
+```json
+{
+  "message": "Comment created",
+  "comment": {
+    "_id": "507f1f77bcf86cd799439013",
+    "postId": "507f1f77bcf86cd799439011",
+    "userId": "507f1f77bcf86cd799439012",
+    "content": "¡Excelente post!",
+    "images": ["https://ejemplo.com/imagen.jpg"],
+    "likes": [],
+    "likesCount": 0,
+    "repost": [],
+    "repostCount": 0
+  }
+}
+```
+
 ## 🔒 Seguridad
 
 - Las contraseñas se encriptan con **bcrypt** antes de almacenarse
@@ -226,6 +532,10 @@ PATCH /users/:id
 - Helmet para configurar headers de seguridad HTTP
 - Validación de datos en todas las entradas con Zod
 - CORS configurado para orígenes específicos
+- Middleware de autenticación JWT para proteger rutas sensibles
+  - Verifica la existencia y validez del token
+  - Maneja tokens expirados e inválidos
+  - Previene acceso no autorizado a recursos protegidos
 
 ## 🧪 Desarrollo
 
