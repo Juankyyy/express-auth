@@ -8,7 +8,9 @@ export class PostController {
   }
 
   static async getById({ id }) {
-    const post = await Post.findById(id);
+    const post = await Post.findById(id)
+      .populate("comments")
+      .populate("userId");
 
     if (!post) throw new Error("Post not found");
 
