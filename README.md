@@ -509,7 +509,7 @@ POST /comments
 **Respuesta exitosa (201):**
 ```json
 {
-  "message": "Comment created",
+  "message": "Comentario creado",
   "comment": {
     "_id": "507f1f77bcf86cd799439013",
     "postId": "507f1f77bcf86cd799439011",
